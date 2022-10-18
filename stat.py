@@ -2,15 +2,18 @@
 # creo una funzione che in base a un valore randomico da una vincita o perdita
 
 # miglioramenti
-# implementare il sentiment del giocatore
+'''
+1) implementare il sentiment del giocatore
+2) statistica che rileva quanti sono in profit e quanti in perdita
+3) dataframe che riporta tutto il percorso di scommesse dell'utente
+4) cambia la parte dove si aggiunge initial capital e mettila appena generi i dati random, perchè è inutile tenerla
+'''
 
-
+import csv
+import random
+import names
 'bug'
 
-
-import names
-import random
-import csv
 
 'function for double your bet'
 
@@ -154,6 +157,14 @@ for i in range(len(persone['name'])):
         persone_aggiornato[i].update(diz_temp)
 
 
+'qui viene salvato il punto di partenza dei giocatori, il nome e il capitale, in una lista di dizionari'
+profit_perdenti = []
+for persona in persone_aggiornato:
+    temp_dict = {"name": persona["name"], "capital": persona["capital"]}
+
+    profit_perdenti.append(temp_dict)
+
+
 'trascrizione dei risultati in una lista di dizionari'
 for giocatore in persone_aggiornato:
     temp = play_x36(giocatore["bet"], giocatore["capital"])
@@ -161,5 +172,24 @@ for giocatore in persone_aggiornato:
     giocatore["capital"] = temp[1]
 
 
-for i in range(len(persone_aggiornato)):
-    print(persone_aggiornato[i])
+'aggiunge una roba inutile'
+
+for giocatori in persone_aggiornato:
+    for dati_giocatori in profit_perdenti:
+        if giocatori["name"] == dati_giocatori["name"]:
+            giocatori.update({"initial_capital": dati_giocatori["capital"]})
+
+
+'controlla chi è in perdita e chi in profitto'
+vincenti = 0
+perdenti = 0
+
+for giocatori in persone_aggiornato:
+    if giocatori["initial_capital"] < giocatori["capital"]:
+        vincenti += 1
+    else:
+        perdenti += 1
+
+
+print("quelli in profit sono " + str(vincenti))
+print("quelli in perdita sono " + str(perdenti))
