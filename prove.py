@@ -11,20 +11,19 @@ def play_x2(bet, capital):
     return (bet, capital)
 
 
-persone = {
-    'name': ['John', 'Marianne', 'Karen', 'antonino'],
-    'capital': [1000, 1000, 1000, 10000],
-    'bet': [10, 10, 10, 10]
-}
+persone_aggiornato = [
+    {
+        "name": "antonio",
+        "capital": 1000,
+        "bet": 10
+    },
+    {
+        "name": "francesco",
+        "capital": 1000,
+        "bet": 10
+    }
+]
 
-persone_aggiornato = []
-for i in range(len(persone['name'])):
-    persone_aggiornato.append({})
-    for key, value in persone.items():
-        diz_temp = {key: value[i]}
-        persone_aggiornato[i].update(diz_temp)
-
-print(persone_aggiornato)
 
 for i in persone_aggiornato:
     temp = play_x2(i["bet"], i["capital"])
