@@ -150,15 +150,20 @@ for giocatori in persone_aggiornato:
 
 
 'controlla chi è in perdita e chi in profitto'
+
 vincenti = 0
 perdenti = 0
+vincenti_30 = 0
 
 for giocatori in persone_aggiornato:
     if giocatori["initial_capital"] < giocatori["capital"]:
         vincenti += 1
+        if (giocatori["capital"] - giocatori["initial_capital"]) > (giocatori["initial_capital"] / 10 * 3):
+            vincenti_30 += 1
     else:
         perdenti += 1
 
 
 print("quelli in profit sono " + str(vincenti))
 print("quelli in perdita sono " + str(perdenti))
+print("quelli in profitto del 10% sono " + str(vincenti_30))
