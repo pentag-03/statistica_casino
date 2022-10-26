@@ -3,8 +3,11 @@
 
 # miglioramenti
 '''
+prima di tutto riorganizza il codice  a livello concettuale
+
 1) implementare il sentiment del giocatore
-2) statistica che rileva quanti sono in profit e quanti in perdita
+2) inizia a pensare in ottica di gruppi di persone, vuol dire che ci saranno più file csv, e i vari gruppi avranno 
+   un modo di giocare diverso dall'altra, quindi ci sarà anche da cambiare buona parte del codice 
 3) dataframe che riporta tutto il percorso di scommesse dell'utente
 4) cambia la parte dove si aggiunge initial capital e mettila appena generi i dati random, perchè è inutile tenerla
 '''
@@ -15,68 +18,13 @@ import names
 'bug'
 
 
-'function for double your bet'
-
-
-def play_x2(bet, capital):
-    for i in range(10):
+def play(bet, capital, ripeti, n_vincenti, reward):
+    for i in range(ripeti):
         if capital > bet:
             capital -= bet
-            x = random.randint(0, 1)
-            if x == 1:
-                capital += bet * 2
-    return (bet, capital)
-
-
-'function for 3x your bet'
-
-
-def play_x3(bet, capital):
-    for i in range(10):
-        if capital > bet:
-            capital -= bet
-            x = random.randint(0, 2)
-            if x == 1:
-                capital += bet * 3
-    return (bet, capital)
-
-
-'function for 6x your bet'
-
-
-def play_x6(bet, capital):
-    for i in range(10):
-        if capital > bet:
-            capital -= bet
-            x = random.randint(0, 5)
-            if x == 1:
-                capital += bet * 6
-    return (bet, capital)
-
-
-'function for 12x your bet'
-
-
-def play_x12(bet, capital):
-    for i in range(10):
-        if capital > bet:
-            capital -= bet
-            x = random.randint(0, 11)
-            if x == 1:
-                capital += bet * 12
-    return (bet, capital)
-
-
-'function for 36x your bet'
-
-
-def play_x36(bet, capital):
-    for i in range(10):
-        if capital >= bet:
-            capital -= bet
-            x = random.randint(0, 35)
-            if x == 1:
-                capital += bet * 36
+            n_estratto = random.randint(0, 36)
+            if n_estratto in n_vincenti:
+                capital += bet * reward
     return (bet, capital)
 
 
@@ -164,10 +112,31 @@ for persona in persone_aggiornato:
 
     profit_perdenti.append(temp_dict)
 
+'questo dizionario contiene i numeri vincenti'
+giochi = {
+    "2x": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18],
+    "3x": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    "6x": [1, 2, 3, 4, 5, 6],
+    "12x": [1, 2, 3],
+    "36x": [1]
+}
+
+'questo dizionario contiene il moltiplicatore in caso di vincita'
+reward = {
+    "2x": 2,
+    "3x": 3,
+    "6x": 6,
+    "12x": 12,
+    "36x": 36
+}
+
+selezione = input(
+    "bro seleziona la modalità di gioco, puoi scegliere fra: 2x, 3x, 6x, 12x, 36x \n")
 
 'trascrizione dei risultati in una lista di dizionari'
 for giocatore in persone_aggiornato:
-    temp = play_x36(giocatore["bet"], giocatore["capital"])
+    temp = play(giocatore["bet"], giocatore["capital"],
+                10, giochi[selezione], reward[selezione])
     giocatore["bet"] = temp[0]
     giocatore["capital"] = temp[1]
 
