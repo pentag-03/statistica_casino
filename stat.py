@@ -17,18 +17,27 @@ import random
 import names
 'bug'
 
+'funzione che prende in input i dati del giocatore e poi inizia a giocare alla ruoulette'
 
-def play(bet, capital, ripeti, n_vincenti, reward):
+n_ludopatici = 0
+
+
+def play(bet, capital, ripeti, n_vincenti, reward, sentiment, n_ludopatici):
     for i in range(ripeti):
+        if sentiment >= random.randint(1, 100):
+            bet *= 2
+            n_ludopatici += 1
         if capital > bet:
             capital -= bet
             n_estratto = random.randint(0, 36)
             if n_estratto in n_vincenti:
                 capital += bet * reward
+                if random.randint(0, 3) == 1:
+                    sentiment += 20
     return (bet, capital)
 
 
-header = ["name", "capital", "bet"]
+header = ["name", "capital", "bet", "sentiment"]
 
 
 random_data = []
@@ -45,6 +54,9 @@ for i in range(int(input("quante righe random vuoi?"))):
         if head == "bet":
             'random bet'
             random_data[i].append(int(10))
+        if head == "sentiment":
+            'random sentiment'
+            random_data[i].append(random.randint(0, 50))
 
 
 with open('persone.csv', 'w', encoding='UTF8', newline='') as file:
@@ -90,7 +102,7 @@ for key in persone.keys():
     for lista in matrice_ordinata:
         if key == lista[0]:
             del lista[0]
-            if key == "capital" or key == "bet":
+            if key == "capital" or key == "bet" or key == "sentiment":
                 for i in range(len(lista)):
                     lista[i] = int(lista[i])
             persone[key] = lista
@@ -108,7 +120,8 @@ for i in range(len(persone['name'])):
 'qui viene salvato il punto di partenza dei giocatori, il nome e il capitale, in una lista di dizionari'
 profit_perdenti = []
 for persona in persone_aggiornato:
-    temp_dict = {"name": persona["name"], "capital": persona["capital"]}
+    temp_dict = {
+        "name": persona["name"], "capital": persona["capital"], "sentiment": persona["sentiment"]}
 
     profit_perdenti.append(temp_dict)
 
@@ -133,10 +146,11 @@ reward = {
 selezione = input(
     "bro seleziona la modalità di gioco, puoi scegliere fra: 2x, 3x, 6x, 12x, 36x \n")
 
+
 'trascrizione dei risultati in una lista di dizionari'
 for giocatore in persone_aggiornato:
     temp = play(giocatore["bet"], giocatore["capital"],
-                10, giochi[selezione], reward[selezione])
+                10, giochi[selezione], reward[selezione], int(giocatore["sentiment"]), n_ludopatici)
     giocatore["bet"] = temp[0]
     giocatore["capital"] = temp[1]
 
@@ -166,4 +180,5 @@ for giocatori in persone_aggiornato:
 
 print("quelli in profit sono " + str(vincenti))
 print("quelli in perdita sono " + str(perdenti))
-print("quelli in profitto del 10% sono " + str(vincenti_30))
+print("quelli in profitto del 30% sono " + str(vincenti_30))
+print("i ludopatici sono " + str(n_ludopatici))
