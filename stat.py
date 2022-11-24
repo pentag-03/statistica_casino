@@ -1,30 +1,29 @@
-# su 3 giocate alla roulette quanto può vincere un giocatore
-# creo una funzione che in base a un valore randomico da una vincita o perdita
-
 # miglioramenti
 '''
 prima di tutto riorganizza il codice  a livello concettuale
 
-1) implementare il sentiment del giocatore
 2) inizia a pensare in ottica di gruppi di persone, vuol dire che ci saranno più file csv, e i vari gruppi avranno 
    un modo di giocare diverso dall'altra, quindi ci sarà anche da cambiare buona parte del codice 
-3) dataframe che riporta tutto il percorso di scommesse dell'utente
 4) cambia la parte dove si aggiunge initial capital e mettila appena generi i dati random, perchè è inutile tenerla
+5) quelli che vincono di più sono quelli che partono con il sentiment più alto?
 '''
 
 import csv
 import random
 import names
+import matplotlib.pyplot as plt
+
 'bug'
 
-'funzione che prende in input i dati del giocatore e poi inizia a giocare alla ruoulette'
 
 n_ludopatici = 0
 
-
-def play(bet, capital, ripeti, n_vincenti, reward, sentiment, n_ludopatici):
+'funzione che prende in input i dati del giocatore e poi inizia a giocare alla ruoulette'
+def play(bet, capital, ripeti, n_vincenti, reward, sentiment, n_ludopatici, activate_sentiment):
+    storico = []
     for i in range(ripeti):
-        if sentiment >= random.randint(1, 100):
+        storico.append(capital)
+        if sentiment >= random.randint(1, 100) and activate_sentiment == True:
             bet *= 2
             n_ludopatici += 1
         if capital > bet:
@@ -32,9 +31,10 @@ def play(bet, capital, ripeti, n_vincenti, reward, sentiment, n_ludopatici):
             n_estratto = random.randint(0, 36)
             if n_estratto in n_vincenti:
                 capital += bet * reward
-                if random.randint(0, 3) == 1:
+                if random.randint(0, 3) == 1 and activate_sentiment == True:
                     sentiment += 20
-    return (bet, capital)
+    return (bet, capital, n_ludopatici, storico)
+    
 
 
 header = ["name", "capital", "bet", "sentiment"]
@@ -147,12 +147,21 @@ selezione = input(
     "bro seleziona la modalità di gioco, puoi scegliere fra: 2x, 3x, 6x, 12x, 36x \n")
 
 
+'decide se usare il sentiment o no'
+activate_sentiment = input("bro vuoi attivare la variabile sentiment? y/n")
+if activate_sentiment == "y":
+    activate_sentiment = True
+else:
+    activate_sentiment = False
+
 'trascrizione dei risultati in una lista di dizionari'
 for giocatore in persone_aggiornato:
     temp = play(giocatore["bet"], giocatore["capital"],
-                10, giochi[selezione], reward[selezione], int(giocatore["sentiment"]), n_ludopatici)
+                100, giochi[selezione], reward[selezione], int(giocatore["sentiment"]), n_ludopatici, activate_sentiment)
     giocatore["bet"] = temp[0]
     giocatore["capital"] = temp[1]
+    n_ludopatici = temp[2]
+    giocatore["storico"] = temp[3]
 
 
 'aggiunge una roba inutile'
@@ -178,7 +187,25 @@ for giocatori in persone_aggiornato:
         perdenti += 1
 
 
+
+'crea il grafico dell''andamento del capitale'
+
+
+
+
+for persone in persone_aggiornato:
+    plt.plot(persone["storico"])
+plt.ylabel('soldi')
+plt.show()
+
+
+
+
 print("quelli in profit sono " + str(vincenti))
 print("quelli in perdita sono " + str(perdenti))
 print("quelli in profitto del 30% sono " + str(vincenti_30))
-print("i ludopatici sono " + str(n_ludopatici))
+print("gli aumenti di puntata sono stati " + str(n_ludopatici))
+
+
+
+
